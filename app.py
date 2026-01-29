@@ -24,22 +24,34 @@ from flask import render_template
 # )
 
 
+# import os
+# import psycopg2
+#
+# DATABASE_URL = os.environ.get("DATABASE_URL")
+#
+# if DATABASE_URL:
+#     conn = psycopg2.connect(DATABASE_URL)
+# else:
+#     # Local fallback (so it still works on your laptop)
+#     conn = psycopg2.connect(
+#         host="localhost",
+#         database="infosys",
+#         user="postgres",
+#         password="meeta"
+#     )
+#
+# cursor = conn.cursor()
+
+
 import os
 import psycopg2
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
-if DATABASE_URL:
-    conn = psycopg2.connect(DATABASE_URL)
-else:
-    # Local fallback (so it still works on your laptop)
-    conn = psycopg2.connect(
-        host="localhost",
-        database="infosys",
-        user="postgres",
-        password="meeta"
-    )
+if not DATABASE_URL:
+    raise ValueError("DATABASE_URL is not set. Database connection failed.")
 
+conn = psycopg2.connect(DATABASE_URL)
 cursor = conn.cursor()
 
 
