@@ -41,18 +41,17 @@ from flask import render_template
 #     )
 #
 # cursor = conn.cursor()
-
-
 import os
 import psycopg2
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
+def get_db_connection():
+    database_url = os.environ.get("DATABASE_URL")
+    if not database_url:
+        raise ValueError("DATABASE_URL is not set.")
 
-if not DATABASE_URL:
-    raise ValueError("DATABASE_URL is not set. Database connection failed.")
+    conn = psycopg2.connect(database_url)
+    return conn
 
-conn = psycopg2.connect(DATABASE_URL)
-cursor = conn.cursor()
 
 
 
