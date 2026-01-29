@@ -5,10 +5,11 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import A4
 
 
-
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import joblib
+import os
 import pandas as pd
 import psycopg2
 import plotly.express as px
@@ -16,47 +17,20 @@ import pandas as pd
 from flask import render_template
 
 
-# conn = psycopg2.connect(
-#     host="localhost",
-#     database="infosys",
-#     user="postgres",
-#     password="meeta"
-# )
 
+conn = psycopg2.connect(
+    host="localhost",
+    database="infosys",
+    user="postgres",
+    password="meeta"
+)
 
-# import os
-# import psycopg2
-#
-# DATABASE_URL = os.environ.get("DATABASE_URL")
-#
-# if DATABASE_URL:
-#     conn = psycopg2.connect(DATABASE_URL)
-# else:
-#     # Local fallback (so it still works on your laptop)
-#     conn = psycopg2.connect(
-#         host="localhost",
-#         database="infosys",
-#         user="postgres",
-#         password="meeta"
-#     )
-#
-# cursor = conn.cursor()
-import os
-import psycopg2
-
-def get_db_connection():
-    database_url = os.environ.get("DATABASE_URL")
-    if not database_url:
-        raise ValueError("DATABASE_URL is not set.")
-
-    conn = psycopg2.connect(database_url)
-    return conn
-
-
-
+cursor = conn.cursor()
 
 app = Flask(__name__)
 CORS(app)
+
+
 
 # Load models
 cost_model = joblib.load("cost_model.pkl")
@@ -67,10 +41,11 @@ def calculate_environment_score(co2, recyclable, durability):
     score = (1 / (1 + co2)) * 0.5 + recyclable * 0.3 + (durability / 10) * 0.2
     return round(score, 3)
 
-# Home route
+#Home route
 @app.route("/", methods=["GET"])
 def home():
     return jsonify({"message": "Eco Packaging AI Backend is running 🚀"})
+
 
 FEATURES = [
     'weight',
@@ -316,7 +291,9 @@ def export_pdf():
         download_name="EcoPackAI_Sustainability_Report.pdf",
         as_attachment=True
     )
-
+@app.route("/test")
+def test():
+    return "App is working!"
 
 
 
@@ -324,4 +301,5 @@ def export_pdf():
 if __name__ == "__main__":
     print(app.url_map)
     app.run(debug=True)
+
 
